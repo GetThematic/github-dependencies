@@ -18,6 +18,13 @@ var execProcess = function (command) {
     });
 }
 
+const parseArray = function (val) {
+    const array = val.split('\n');
+    const filtered = array.filter((n) => n)
+
+    return filtered.map((n) => n.trim())
+}
+
 const repositoryLocation = `${process.env['RUNNER_TEMP']}/orchestrator-repo`
 
 
@@ -25,7 +32,7 @@ function run() {
     try {
         // `who-to-greet` input defined in action metadata file
         const orchestrator = core.getInput('orchestrator');
-        const unencodedDependencies = core.getInput('dependencies');
+        const unencodedDependencies = parseArray(core.getInput('dependencies'));
         const unencodedRepository = encodeURIComponent(github.context.payload.repository.url);
         console.log(`Notifying that ${unencodedRepository} is complete`);
         const dependencies = unencodedDependencies.map(d => encodeURIComponent(d));

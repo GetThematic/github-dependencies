@@ -11,19 +11,15 @@ It does not handle circular dependencies or create the most optimal graph of dep
 
 ## Environment variables
 
-## `GIT_SSH_TOKEN`
+### `GIT_SSH_TOKEN`
 
 **Required** The token that has read access to the orchestrator repository
 
 ## Inputs
 
-## `orchestrator`
+### `orchestrator`
 
 **Required** The repository being used for orchestration
-
-## `repository`
-
-**Required** The repository calling this action
 
 ## Example usage
 
@@ -36,22 +32,25 @@ with:
 
 ## Environment variables
 
-## `GIT_SSH_TOKEN`
+### `GIT_SSH_TOKEN`
 
 **Required** The token that has write access to the orchestrator repository
 
 ## Inputs
 
-## `orchestrator`
+### `orchestrator`
 
 **Required** The repository being used for orchestration
 
-## `repository`
+### `dependencies`
 
-**Required** The repository calling this action
+**Required** The list of newline separated repositories that will be registered as upstream of the calling repo
 
 ## Example usage
 
 uses: actions/github-dependencies/register-dependencies@v1.1
 with:
   orchestrator: github.com/YourOrg/orchestrator-repo
+  dependencies: |
+    https://github.com/YourOrg/yourrepo
+    https://github.com/YourOrg/yourrepo2
