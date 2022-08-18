@@ -23,12 +23,21 @@ function setupSSHKey() {
     }
 }
 
+function prepareUrl(url) {
+    const unencoded = url.replace(/(^\w+:|^)\/\//, '');
+    return encodeURIComponent(unencoded);
+}
+
+function unprepareUrl(url) {
+    const unencoded = decodeURIComponent(url);
+    return 'https://' + unencoded;
+}
+
 function run() {
     try {
         // `who-to-greet` input defined in action metadata file
         const orchestrator = core.getInput('orchestrator');
-        const unencodedRepository = github.context.payload.repository.url.replace(/(^\w+:|^)\/\//, '');
-        const repository = encodeURIComponent(unencodedRepository);
+        const repository = prepareUrl(github.context.payload.repository.url);
         console.log(`Notifying that ${repository} is complete`);
 
         // clone the orchestrator repo
@@ -41,7 +50,7 @@ function run() {
         console.log(`Reading dependencies from ${upstreamFolder}`);
         if (fs.existsSync(upstreamFolder)) {
             fs.readdirSync(upstreamFolder).forEach(file => {
-                console.log(file);
+                console.log("Dependency found: ", unprepareUrl(file));
             });
         } else {
             console.log("No downstream dependencies found!")

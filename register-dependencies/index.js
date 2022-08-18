@@ -31,6 +31,10 @@ function setupSSHKey() {
     }
 }
 
+function prepareUrl(url) {
+    const unencoded = url.replace(/(^\w+:|^)\/\//, '');
+    return encodeURIComponent(unencoded);
+}
 
 function run() {
     try {
@@ -41,10 +45,9 @@ function run() {
         setupSSHKey();
 
         const unencodedDependencies = parseArray(core.getInput('dependencies'));
-        const unencodedRepository = github.context.payload.repository.url.replace(/(^\w+:|^)\/\//, '');
         console.log(`Notifying that ${unencodedRepository} is complete`);
-        const dependencies = unencodedDependencies.map(d => encodeURIComponent(d));
-        const repository = encodeURIComponent(unencodedRepository);
+        const dependencies = unencodedDependencies.map(d => prepareUrl(d));
+        const repository = prepareUrl(github.context.payload.repository.url);
 
         console.log(`Debug: ${repository}`, dependencies);
 
