@@ -25,7 +25,7 @@ function run() {
         const orchestrator = core.getInput('orchestrator');
         const workflow = core.getInput('workflow')
         const unencodedDependencies = parseArray(core.getInput('dependencies'));
-        const unencodedRepository = encodeURIComponent(github.context.payload.repository.url);
+        const unencodedRepository = encodeURIComponent(github.context.payload.repository.git_url);
         console.log(`Notifying that ${unencodedRepository} is complete`);
         const dependencies = unencodedDependencies.map(d => encodeURIComponent(d));
         const repository = encodeURIComponent(unencodedRepository);
