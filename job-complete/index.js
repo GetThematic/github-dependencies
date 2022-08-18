@@ -4,14 +4,16 @@ const fs = require('fs');
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-var execProcess = function (command, cb) {
+var execProcess = function (command) {
     var child = exec(command, function (err, stdout, stderr) {
         if (err != null) {
-            return cb(new Error(err), null);
+            return new Error(err);
         } else if (typeof (stderr) != "string") {
-            return cb(new Error(stderr), null);
+            console.log(stderr);
+            return new Error(stderr);
         } else {
-            return cb(null, stdout);
+            console.log(stdout);
+            return stdout;
         }
     });
 }
@@ -33,7 +35,7 @@ function run() {
 
         // broadcast a build message to each
         const upstreamFolder = `${repositoryLocation}/upstream/${repository}`;
-        console.log(`Reading dependencies from ${dependencyFolder}`);
+        console.log(`Reading dependencies from ${upstreamFolder}`);
         fs.readdirSync(upstreamFolder).forEach(file => {
             console.log(file);
         });

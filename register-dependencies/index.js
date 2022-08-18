@@ -4,16 +4,16 @@ const fs = require('fs');
 const core = require('@actions/core');
 const github = require('@actions/github');
 
-var execProcess = function (command, cb) {
+var execProcess = function (command) {
     var child = exec(command, function (err, stdout, stderr) {
         if (err != null) {
-            return cb(new Error(err), null);
+            return new Error(err);
         } else if (typeof (stderr) != "string") {
             console.log(stderr);
-            return cb(new Error(stderr), null);
+            return new Error(stderr);
         } else {
             console.log(stdout);
-            return cb(null, stdout);
+            return stdout;
         }
     });
 }

@@ -1,6 +1,11 @@
 # Github Dependency Actions
 
-Actions related to github dependencies
+Github actions are missing a vital piece of the CI/CD puzzle: the ability to build workflows in downstream projects.
+
+These actions overcome this by using an otherwise empty repository as a record of what the dependencies are between projects and allowing downstream projects to register what their dependencies are and upstream projects to build them when they are complete.
+
+It does not handle circular dependencies or create the most optimal graph of dependency building. It is recommended to do this by using the `register-dependencies` action judiciously. 
+
 
 # Job Complete
 
