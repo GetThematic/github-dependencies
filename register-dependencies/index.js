@@ -26,7 +26,7 @@ function setupSSHKey() {
         const sshKeyPath = `${process.env['RUNNER_TEMP']}/key`;
         fs.writeFileSync(sshKeyPath, sshKey.trim() + '\n', { mode: 0o600 });
 
-        gitSSHCommand = `GIT_SSH_COMMAND='ssh -i "${sshKeyPath}" -o "StrictHostKeyChecking no" -vvv'`;
+        gitSSHCommand = `GIT_SSH_COMMAND='ssh -i "${sshKeyPath}" -o "StrictHostKeyChecking no"'`;
         console.log("Using provided ssh-key");
     }
 }
@@ -93,11 +93,15 @@ function run() {
             fs.rmSync(oldUpstreamPath);
         })
 
-        console.log("status", execProcess(`git status --git-path  ${repositoryLocation}/.git`));
+        fs.readdirSync(repositoryLocation).forEach(file => {
+            console.log("file", file)
+        });
+
+        console.log("status", execProcess(`git status --git-path  ${repositoryLocation}`));
         if (changed) {
             console.log("Pushing to git");
-            console.log("commit", execProcess(`git commit --git-path  ${repositoryLocation}/.git -a -m "Updating dependencies for ${unencodedRepository}`));
-            console.log("commit", execProcess(`${gitSSHCommand} git push --git-path  ${repositoryLocation}/.git`));
+            console.log("commit", execProcess(`git commit --git-path  ${repositoryLocation} -a -m "Updating dependencies for ${unencodedRepository}`));
+            console.log("commit", execProcess(`${gitSSHCommand} git push --git-path  ${repositoryLocation}`));
         }
 
     } catch (error) {

@@ -22,7 +22,7 @@ It does not handle circular dependencies or create the most optimal graph of dep
 
 uses: actions/github-dependencies/job-complete@v1.1
 with:
-  orchestrator: https://github.com/YourOrg/orchestrator-repo
+  orchestrator: ssh://git@github.com/YourOrg/orchestrator-repo
 
 
 # Register Dependencies
@@ -50,7 +50,7 @@ with:
 
 uses: actions/github-dependencies/register-dependencies@v1.1
 with:
-  orchestrator: https://github.com/YourOrg/orchestrator-repo
+  orchestrator: ssh://git@github.com/YourOrg/orchestrator-repo
   dependencies: |
     https://github.com/YourOrg/repo-1
     https://github.com/YourOrg/repo-2
