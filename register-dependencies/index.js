@@ -58,21 +58,22 @@ function run() {
 
         console.log("Existing Dependencies", existingDependencies);
 
-        const newDependencies = dependencies - existingDependencies;
+        const newDependencies = dependencies.filter(x => !existingDependencies.includes(x));
         console.log("New dependencies", newDependencies);
 
+        const defunctDependencies = existingDependencies.filter(x => !dependencies.includes(x));
+        console.log("Old dependencies to remove", defunctDependencies);
+
         newDependencies.map(dependency => {
+            console.log("\tRegistering dependency", dependency);
             const newDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
             fs.writeFile(newDownstreamPath, workflow);
             const newUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
             fs.writeFile(newUpstreamPath, workflow);
         })
 
-        const defunctDependencies = existingDependencies - dependencies;
-        console.log("Old dependencies to remove", defunctDependencies);
-
-
         defunctDependencies.map(dependency => {
+            console.log("\tRemoving dependency", dependency);
             const oldDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
             fs.rm(oldDownstreamPath);
             const oldUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
