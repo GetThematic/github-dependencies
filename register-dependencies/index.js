@@ -45,9 +45,10 @@ function run() {
         setupSSHKey();
 
         const unencodedDependencies = parseArray(core.getInput('dependencies'));
+        const unencodedRepository = github.context.payload.repository.url;
         console.log(`Notifying that ${unencodedRepository} is complete`);
         const dependencies = unencodedDependencies.map(d => prepareUrl(d));
-        const repository = prepareUrl(github.context.payload.repository.url);
+        const repository = prepareUrl(unencodedRepository);
 
         console.log(`Debug: ${repository}`, dependencies);
 
