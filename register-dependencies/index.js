@@ -25,7 +25,7 @@ function setupSSHKey() {
     if (sshKey) {
         const sshKeyPath = `${process.env['RUNNER_TEMP']}/key`;
         fs.writeFileSync(sshKeyPath, sshKey.trim() + '\n', { mode: 0o600 });
-        gitSSHCommand = `GIT_SSH_COMMAND=ssh -i ${sshKeyPath}`;
+        gitSSHCommand = `GIT_SSH_COMMAND='ssh -i "${sshKeyPath}"'`;
         console.log("Using provided ssh-key");
     }
 }
