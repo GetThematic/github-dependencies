@@ -61,16 +61,18 @@ function run() {
         const newDependencies = dependencies.filter(x => !existingDependencies.includes(x));
         console.log("New dependencies", newDependencies);
 
+        newDependencies.map(dependency => {
+            fs.mkdirSync(`${repositoryLocation}/downstream/${repository}`, { recursive: true });
+            const newDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
+            fs.writeFileSync(newDownstreamPath, workflow, { flag: 'w' });
+
+            fs.mkdirSync(`${repositoryLocation}/upstream/${dependency}`, { recursive: true });
+            const newUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
+            fs.writeFileSync(newUpstreamPath, workflow, { flag: 'w' });
+        })
+
         const defunctDependencies = existingDependencies.filter(x => !dependencies.includes(x));
         console.log("Old dependencies to remove", defunctDependencies);
-
-        newDependencies.map(dependency => {
-            const newDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
-            console.log("\tRegistering dependency", dependency, newDownstreamPath);
-            fs.writeFileSync(newDownstreamPath, workflow);
-            const newUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
-            fs.writeFileSync(newUpstreamPath, workflow);
-        })
 
         defunctDependencies.map(dependency => {
             console.log("\tRemoving dependency", dependency);
