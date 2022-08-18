@@ -26,8 +26,7 @@ function setupSSHKey() {
         const sshKeyPath = `${process.env['RUNNER_TEMP']}/key`;
         fs.writeFileSync(sshKeyPath, sshKey.trim() + '\n', { mode: 0o600 });
 
-        console.log("sshkey", execProcess(`cat ${sshKeyPath}`));
-        gitSSHCommand = `GIT_SSH_COMMAND='ssh -i "${sshKeyPath}" -o "StrictHostKeyChecking no"'`;
+        gitSSHCommand = `GIT_SSH_COMMAND='ssh -i "${sshKeyPath}" -o "StrictHostKeyChecking no -vvv"'`;
         console.log("Using provided ssh-key");
     }
 }
