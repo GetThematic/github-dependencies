@@ -96,7 +96,7 @@ function run() {
         console.log("status", execProcess(`git -C ${repositoryLocation} status`));
         if (changed) {
             console.log("Pushing to git");
-            console.log("commit", execProcess(`git -C ${repositoryLocation} commit -a -m "Updating dependencies for ${unencodedRepository}`));
+            console.log("commit", execProcess(`git -C ${repositoryLocation} commit -a -m "Updating dependencies for ${unencodedRepository}"`));
             console.log("commit", execProcess(`${gitSSHCommand} git -C ${repositoryLocation} push`));
         }
 
