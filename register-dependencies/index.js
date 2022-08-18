@@ -61,7 +61,10 @@ function run() {
         const newDependencies = dependencies.filter(x => !existingDependencies.includes(x));
         console.log("New dependencies", newDependencies);
 
+        let changed = false;
+
         newDependencies.map(dependency => {
+            changed = true;
             fs.mkdirSync(`${repositoryLocation}/downstream/${repository}`, { recursive: true });
             const newDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
             fs.writeFileSync(newDownstreamPath, workflow, { flag: 'w' });
@@ -75,6 +78,7 @@ function run() {
         console.log("Old dependencies to remove", defunctDependencies);
 
         defunctDependencies.map(dependency => {
+            changed = true;
             console.log("\tRemoving dependency", dependency);
             const oldDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
             fs.rmSync(oldDownstreamPath);
@@ -82,7 +86,12 @@ function run() {
             fs.rmSync(oldUpstreamPath);
         })
 
-        execProcess(`cd  ${repositoryLocation} && git status`);
+        console.log("status", execProcess(`cd  ${repositoryLocation} && git status`));
+        if (changed) {
+            console.log("Pushing to git");
+            console.log("commit", execProcess(`cd  ${repositoryLocation} && git commit -a -m "Updating dependencies for ${unencodedRepository}`));
+            console.log("commit", execProcess(`cd  ${repositoryLocation} && git push`);
+        }
 
     } catch (error) {
         core.setFailed(error.message);
