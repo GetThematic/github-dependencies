@@ -50,9 +50,11 @@ function run() {
         console.log(`Reading dependencies from ${dependencyFolder}`);
 
         const existingDependencies = [];
-        fs.readdirSync(dependencyFolder).forEach(file => {
-            existingDependencies.push(file);
-        });
+        if (fs.existsSync(dependencyFolder)) {
+            fs.readdirSync(dependencyFolder).forEach(file => {
+                existingDependencies.push(file);
+            });
+        }
 
         console.log("Existing Dependencies", existingDependencies);
 
