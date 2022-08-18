@@ -93,15 +93,11 @@ function run() {
             fs.rmSync(oldUpstreamPath);
         })
 
-        fs.readdirSync(repositoryLocation).forEach(file => {
-            console.log("file", file)
-        });
-
-        console.log("status", execProcess(`git status --git-path  ${repositoryLocation}`));
+        console.log("status", execProcess(`git -C ${repositoryLocation} status`));
         if (changed) {
             console.log("Pushing to git");
-            console.log("commit", execProcess(`git commit --git-path  ${repositoryLocation} -a -m "Updating dependencies for ${unencodedRepository}`));
-            console.log("commit", execProcess(`${gitSSHCommand} git push --git-path  ${repositoryLocation}`));
+            console.log("commit", execProcess(`git -C ${repositoryLocation} commit -a -m "Updating dependencies for ${unencodedRepository}`));
+            console.log("commit", execProcess(`${gitSSHCommand} git -C ${repositoryLocation} push`));
         }
 
     } catch (error) {
