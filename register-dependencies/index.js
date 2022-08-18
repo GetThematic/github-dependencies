@@ -65,19 +65,19 @@ function run() {
         console.log("Old dependencies to remove", defunctDependencies);
 
         newDependencies.map(dependency => {
-            console.log("\tRegistering dependency", dependency);
             const newDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
-            fs.writeFile(newDownstreamPath, workflow);
+            console.log("\tRegistering dependency", dependency, newDownstreamPath);
+            fs.writeFileSync(newDownstreamPath, workflow);
             const newUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
-            fs.writeFile(newUpstreamPath, workflow);
+            fs.writeFileSync(newUpstreamPath, workflow);
         })
 
         defunctDependencies.map(dependency => {
             console.log("\tRemoving dependency", dependency);
             const oldDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
-            fs.rm(oldDownstreamPath);
+            fs.rmSync(oldDownstreamPath);
             const oldUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
-            fs.rm(oldUpstreamPath);
+            fs.rmSync(oldUpstreamPath);
         })
 
         execProcess(`cd  ${repositoryLocation} && git status`);
