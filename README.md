@@ -4,6 +4,12 @@ Actions related to github dependencies
 
 # Job Complete
 
+## Environment variables
+
+## `GIT_SSH_TOKEN`
+
+**Required** The token that has read access to the orchestrator repository
+
 ## Inputs
 
 ## `orchestrator`
@@ -22,6 +28,12 @@ with:
 
 
 # Register Dependencies
+
+## Environment variables
+
+## `GIT_SSH_TOKEN`
+
+**Required** The token that has write access to the orchestrator repository
 
 ## Inputs
 

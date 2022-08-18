@@ -1,0 +1,87 @@
+const exec = require('child_process').exec;
+const fs = require('fs');
+
+const core = require('@actions/core');
+const github = require('@actions/github');
+
+var execProcess = function (command, cb) {
+    var child = exec(command, function (err, stdout, stderr) {
+        if (err != null) {
+            return cb(new Error(err), null);
+        } else if (typeof (stderr) != "string") {
+            console.log(stderr);
+            return cb(new Error(stderr), null);
+        } else {
+            console.log(stdout);
+            return cb(null, stdout);
+        }
+    });
+}
+
+const repositoryLocation = `${process.env['RUNNER_TEMP']}/orchestrator-repo`
+
+
+function run() {
+    try {
+        // `who-to-greet` input defined in action metadata file
+        const orchestrator = core.getInput('orchestrator');
+        const dependencies = core.getInput('dependencies');
+        const repository = github.context.payload.repository.url;
+        console.log(`Notifying that ${repository} is complete`);
+
+        // clone the orchestrator repo
+        console.log(`Cloning ${orchestrator} to ${repositoryLocation}`);
+        execProcess(`git clone ${orchestrator} ${repositoryLocation}`);
+
+        // find the existing dependencies
+        const dependencyFolder = `${repositoryLocation}/downstream/${repository}`;
+        console.log(`Reading dependencies from ${dependencyFolder}`);
+
+        const existingDependencies = [];
+        fs.readdirSync(dependencyFolder).forEach(file => {
+            existingDependencies.push(file);
+        });
+
+        console.log("Existing Dependencies", existingDependencies);
+
+        const newDependencies = dependencies - existingDependencies;
+        console.log("New dependencies", newDependencies);
+
+        newDependencies.map(dependency => {
+            const newDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
+            fs.writeFile(newDownstreamPath, "");
+            const newUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
+            fs.writeFile(newUpstreamPath, "");
+        })
+
+        const defunctDependencies = existingDependencies - dependencies;
+        console.log("Old dependencies to remove", defunctDependencies);
+
+
+        defunctDependencies.map(dependency => {
+            const oldDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
+            fs.rm(oldDownstreamPath);
+            const oldUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
+            fs.rm(oldUpstreamPath);
+        })
+
+        execProcess(`cd  ${repositoryLocation} && git status`);
+
+    } catch (error) {
+        core.setFailed(error.message);
+    }
+}
+
+function cleanup() {
+    execProcess(`rm -r -y ${repositoryLocation} || true`);
+}
+
+
+// Main
+if (!process.env['STATE_isPost']) {
+    run()
+}
+// Post
+else {
+    cleanup()
+}
