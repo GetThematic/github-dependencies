@@ -23,7 +23,7 @@ function setupSSHKey() {
     }
 }
 
-const dispatchWorkflow = async (github, owner, repo, workflow_id, reference, parameters) => {
+const dispatchWorkflow = async (octokit, owner, repo, workflow_id, reference, parameters) => {
     const dispatchResp = await octokit.request(`POST /repos/${owner}/${repo}/actions/workflows/${workflow_id}/dispatches`, {
         ref: reference,
         inputs: parameters
