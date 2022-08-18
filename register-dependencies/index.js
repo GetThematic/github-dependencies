@@ -93,11 +93,14 @@ function run() {
             fs.rmSync(oldUpstreamPath);
         })
 
-        console.log("status", execProcess(`git -C ${repositoryLocation} status`));
+        console.log(execProcess(`git -C ${repositoryLocation} status`));
         if (changed) {
+            console.log(execProcess(`git -C ${repositoryLocation} config --local user.email action@orchestrator`))
+            console.log(execProcess(`git -C ${repositoryLocation} config --local user.name "action orchestrator"`))
+
             console.log("Pushing to git");
-            console.log("commit", execProcess(`git -C ${repositoryLocation} commit -a -m "Updating dependencies for ${unencodedRepository}"`));
-            console.log("commit", execProcess(`${gitSSHCommand} git -C ${repositoryLocation} push`));
+            console.log(execProcess(`git -C ${repositoryLocation} commit -a -m "Updating dependencies for ${unencodedRepository}"`));
+            console.log(execProcess(`${gitSSHCommand} git -C ${repositoryLocation} push`));
         }
 
     } catch (error) {
