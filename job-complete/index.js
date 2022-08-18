@@ -23,35 +23,54 @@ function setupSSHKey() {
     }
 }
 
+const dispatchWorkflow = async (github, owner, repo, workflow_id, reference, parameters) => {
+    const dispatchResp = await octokit.request(`POST /repos/${owner}/${repo}/actions/workflows/${workflow_id}/dispatches`, {
+        ref: reference,
+        inputs: parameters
+    });
+    console.log(`API response status: ${dispatchResp.status} 🚀`);
+}
+
 function prepareUrl(url) {
     const unencoded = url.replace(/(^\w+:|^)\/\//, '');
     return encodeURIComponent(unencoded);
 }
 
 function unprepareUrl(url) {
-    const unencoded = decodeURIComponent(url);
-    return 'https://' + unencoded;
+    const decoded = decodeURIComponent(url);
+    const split = unencoded.split('/');
+    return { 'owner': split[1], 'repo': split[2] };
 }
 
 function run() {
     try {
         // `who-to-greet` input defined in action metadata file
         const orchestrator = core.getInput('orchestrator');
+        const token = core.getInput('github-token');
         const unencodedRepository = github.context.payload.repository.url;
         console.log(`Notifying that ${unencodedRepository} is complete`);
         const repository = prepareUrl(unencodedRepository);
+
+        setupSSHKey();
 
         // clone the orchestrator repo
         console.log(`Cloning ${orchestrator} to ${repositoryLocation}`);
         execProcess(`${gitSSHCommand} git clone --depth 1 ${orchestrator} ${repositoryLocation}`);
         // find all dependencies of url
 
+        // Get octokit client for making API calls
+        const octokit = github.getOctokit(token);
+
         // broadcast a build message to each
         const upstreamFolder = `${repositoryLocation}/upstream/${repository}`;
         console.log(`Reading dependencies from ${upstreamFolder}`);
         if (fs.existsSync(upstreamFolder)) {
             fs.readdirSync(upstreamFolder).forEach(file => {
-                console.log("Dependency found: ", unprepareUrl(file));
+                const url = unprepareUrl(file);
+                console.log("Dependency found: ", url);
+                const workflow = fs.readFileSync(`${upstreamFolder}/${file}`);
+
+                dispatchWorkflow(octokit, url['owner'], url['repo'], workflow, 'master', {});
             });
         } else {
             console.log("No downstream dependencies found!")
