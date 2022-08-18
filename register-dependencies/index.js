@@ -95,10 +95,11 @@ function run() {
 
         console.log(execProcess(`git -C ${repositoryLocation} status`));
         if (changed) {
-            console.log(execProcess(`git -C ${repositoryLocation} config --local user.email action@orchestrator`))
-            console.log(execProcess(`git -C ${repositoryLocation} config --local user.name "action orchestrator"`))
 
             console.log("Pushing to git");
+            console.log(execProcess(`git -C ${repositoryLocation} config --local user.email action@orchestrator`))
+            console.log(execProcess(`git -C ${repositoryLocation} config --local user.name "action orchestrator"`))
+            console.log(execProcess(`git -C ${repositoryLocation} add --all`))
             console.log(execProcess(`git -C ${repositoryLocation} commit -a -m "Updating dependencies for ${unencodedRepository}"`));
             console.log(execProcess(`${gitSSHCommand} git -C ${repositoryLocation} push`));
         }
