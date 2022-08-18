@@ -27,7 +27,8 @@ function run() {
     try {
         // `who-to-greet` input defined in action metadata file
         const orchestrator = core.getInput('orchestrator');
-        const repository = encodeURIComponent(github.context.payload.repository.url);
+        const unencodedRepository = github.context.payload.repository.url.replace(/(^\w+:|^)\/\//, '');
+        const repository = encodeURIComponent(unencodedRepository);
         console.log(`Notifying that ${repository} is complete`);
 
         // clone the orchestrator repo
