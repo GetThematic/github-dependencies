@@ -86,11 +86,11 @@ function run() {
             fs.rmSync(oldUpstreamPath);
         })
 
-        console.log("status", execProcess(`cd  ${repositoryLocation} && git status`));
+        console.log("status", execProcess(`git status --git-path  ${repositoryLocation}/.git`));
         if (changed) {
             console.log("Pushing to git");
-            console.log("commit", execProcess(`cd  ${repositoryLocation} && git commit -a -m "Updating dependencies for ${unencodedRepository}`));
-            console.log("commit", execProcess(`cd  ${repositoryLocation} && git push`));
+            console.log("commit", execProcess(`git commit --git-path  ${repositoryLocation}/.git -a -m "Updating dependencies for ${unencodedRepository}`));
+            console.log("commit", execProcess(`git push --git-path  ${repositoryLocation}/.git`));
         }
 
     } catch (error) {
