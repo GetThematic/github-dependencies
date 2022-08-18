@@ -38,7 +38,7 @@ function prepareUrl(url) {
 
 function unprepareUrl(url) {
     const decoded = decodeURIComponent(url);
-    const split = unencoded.split('/');
+    const split = decoded.split('/');
     return { 'owner': split[1], 'repo': split[2] };
 }
 
