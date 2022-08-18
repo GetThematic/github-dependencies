@@ -25,7 +25,7 @@ It does not handle circular dependencies or create the most optimal graph of dep
 
 uses: actions/github-dependencies/job-complete@v1.1
 with:
-  orchestrator: git://github.com/YourOrg/orchestrator-repo.git
+  orchestrator: https://github.com/YourOrg/orchestrator-repo
 
 
 # Register Dependencies
@@ -55,10 +55,10 @@ with:
 
 uses: actions/github-dependencies/register-dependencies@v1.1
 with:
-  orchestrator: git://github.com/YourOrg/orchestrator-repo.git
+  orchestrator: https://github.com/YourOrg/orchestrator-repo
   dependencies: |
-    git://github.com/YourOrg/repo-1.git
-    git://github.com/YourOrg/repo-2.git
+    https://github.com/YourOrg/repo-1
+    https://github.com/YourOrg/repo-2
 
 
 # TODO

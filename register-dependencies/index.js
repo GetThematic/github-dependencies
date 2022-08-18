@@ -25,7 +25,7 @@ function run() {
         const orchestrator = core.getInput('orchestrator');
         const workflow = core.getInput('workflow')
         const unencodedDependencies = parseArray(core.getInput('dependencies'));
-        const unencodedRepository = encodeURIComponent(github.context.payload.repository.git_url);
+        const unencodedRepository = encodeURIComponent(github.context.payload.repository.url);
         console.log(`Notifying that ${unencodedRepository} is complete`);
         const dependencies = unencodedDependencies.map(d => encodeURIComponent(d));
         const repository = encodeURIComponent(unencodedRepository);
@@ -83,6 +83,7 @@ function run() {
             console.log("commit", execProcess(`git commit --git-path  ${repositoryLocation}/.git -a -m "Updating dependencies for ${unencodedRepository}`));
             console.log("commit", execProcess(`git push --git-path  ${repositoryLocation}/.git`));
         }
+        // GIT_SSH_COMMAND='ssh -i ~/.ssh/your_private_key'
 
     } catch (error) {
         core.setFailed(error.message);
