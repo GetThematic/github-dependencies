@@ -1,21 +1,12 @@
-const exec = require('child_process').exec;
+const exec = require('child_process').execSync;
 const fs = require('fs');
 
 const core = require('@actions/core');
 const github = require('@actions/github');
 
 var execProcess = function (command) {
-    var child = exec(command, function (err, stdout, stderr) {
-        if (err != null) {
-            return new Error(err);
-        } else if (typeof (stderr) != "string") {
-            console.log(stderr);
-            return new Error(stderr);
-        } else {
-            console.log(stdout);
-            return stdout;
-        }
-    });
+    var result = exec(command);
+    return result.toString();
 }
 
 const parseArray = function (val) {
