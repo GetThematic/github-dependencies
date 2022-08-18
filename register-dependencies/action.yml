@@ -5,7 +5,10 @@ inputs:
     description: "URL of orchestrator repository"
     required: true
   dependencies:
-    description: "List of repository urls to register as dependents"
+    description: "List of repository urls to register as dependents newline separated"
+    required: true
+  workflow:
+    description: "Name of the yaml file to run when an upstream dependency is built"
     required: true
 runs:
   using: "node16"

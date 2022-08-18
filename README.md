@@ -46,6 +46,11 @@ with:
 
 **Required** The list of newline separated repositories that will be registered as upstream of the calling repo
 
+
+### `workflow`
+
+**Required** The name of the workflow to run (relative to .github/workflows)
+
 ## Example usage
 
 uses: actions/github-dependencies/register-dependencies@v1.1
@@ -54,3 +59,7 @@ with:
   dependencies: |
     https://github.com/YourOrg/yourrepo
     https://github.com/YourOrg/yourrepo2
+
+
+# TODO
+* Currently if the workflow registered with register-dependencies changes, it won't be updated correctly

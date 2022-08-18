@@ -32,6 +32,7 @@ function run() {
     try {
         // `who-to-greet` input defined in action metadata file
         const orchestrator = core.getInput('orchestrator');
+        const workflow = core.getInput('workflow')
         const unencodedDependencies = parseArray(core.getInput('dependencies'));
         const unencodedRepository = encodeURIComponent(github.context.payload.repository.url);
         console.log(`Notifying that ${unencodedRepository} is complete`);
@@ -60,9 +61,9 @@ function run() {
 
         newDependencies.map(dependency => {
             const newDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
-            fs.writeFile(newDownstreamPath, "");
+            fs.writeFile(newDownstreamPath, workflow);
             const newUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
-            fs.writeFile(newUpstreamPath, "");
+            fs.writeFile(newUpstreamPath, workflow);
         })
 
         const defunctDependencies = existingDependencies - dependencies;
