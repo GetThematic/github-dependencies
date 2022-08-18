@@ -25,7 +25,7 @@ function run() {
     try {
         // `who-to-greet` input defined in action metadata file
         const orchestrator = core.getInput('orchestrator');
-        const repository = github.context.payload.repository.url;
+        const repository = encodeURIComponent(github.context.payload.repository.url);
         console.log(`Notifying that ${repository} is complete`);
 
         // clone the orchestrator repo
@@ -36,9 +36,13 @@ function run() {
         // broadcast a build message to each
         const upstreamFolder = `${repositoryLocation}/upstream/${repository}`;
         console.log(`Reading dependencies from ${upstreamFolder}`);
-        fs.readdirSync(upstreamFolder).forEach(file => {
-            console.log(file);
-        });
+        if (fs.existsSync(upstreamFolder)) {
+            fs.readdirSync(upstreamFolder).forEach(file => {
+                console.log(file);
+            });
+        } else {
+            console.log("No downstream dependencies found!")
+        }
 
     } catch (error) {
         core.setFailed(error.message);

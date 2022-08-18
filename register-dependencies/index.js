@@ -25,9 +25,13 @@ function run() {
     try {
         // `who-to-greet` input defined in action metadata file
         const orchestrator = core.getInput('orchestrator');
-        const dependencies = core.getInput('dependencies');
-        const repository = github.context.payload.repository.url;
-        console.log(`Notifying that ${repository} is complete`);
+        const unencodedDependencies = core.getInput('dependencies');
+        const unencodedRepository = encodeURIComponent(github.context.payload.repository.url);
+        console.log(`Notifying that ${unencodedRepository} is complete`);
+        const dependencies = unencodedDependencies.map(d => encodeURIComponent(d));
+        const repository = encodeURIComponent(unencodedRepository);
+
+        console.log(`Debug: ${repository}`, dependencies);
 
         // clone the orchestrator repo
         console.log(`Cloning ${orchestrator} to ${repositoryLocation}`);
