@@ -9,17 +9,14 @@ It does not handle circular dependencies or create the most optimal graph of dep
 
 # Job Complete
 
-## Environment variables
-
-### `GIT_SSH_TOKEN`
-
-**Required** The token that has read access to the orchestrator repository
-
 ## Inputs
 
 ### `orchestrator`
 
 **Required** The repository being used for orchestration
+### `token`
+
+**Required** Token to use for accessing orchestrator and downstream workflows
 
 ## Example usage
 
@@ -29,12 +26,6 @@ with:
 
 
 # Register Dependencies
-
-## Environment variables
-
-### `GIT_SSH_TOKEN`
-
-**Required** The token that has write access to the orchestrator repository
 
 ## Inputs
 
@@ -50,6 +41,10 @@ with:
 ### `workflow`
 
 **Required** The name of the workflow to run (relative to .github/workflows)
+
+### `ssh-key`
+
+**Required** SSH key to use for accessing orchestrator
 
 ## Example usage
 

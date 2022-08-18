@@ -11,6 +11,17 @@ var execProcess = function (command) {
 
 const repositoryLocation = `${process.env['RUNNER_TEMP']}/orchestrator-repo`
 
+let gitSSHCommand = '';
+
+function setupSSHKey() {
+    const sshKey = core.getInput('ssh-key');
+    if (sshKey) {
+        const sshKeyPath = `${process.env['RUNNER_TEMP']}/key`;
+        fs.writeFileSync(sshKeyPath, sshKey.trim() + '\n', { mode: 0o600 });
+        gitSSHCommand = `GIT_SSH_COMMAND=ssh -i ${sshKeyPath}`;
+        console.log("Using provided ssh-key");
+    }
+}
 
 function run() {
     try {
@@ -21,7 +32,7 @@ function run() {
 
         // clone the orchestrator repo
         console.log(`Cloning ${orchestrator} to ${repositoryLocation}`);
-        execProcess(`git clone ${orchestrator} ${repositoryLocation}`);
+        execProcess(`${gitSSHCommand} git clone --depth 1 ${orchestrator} ${repositoryLocation}`);
         // find all dependencies of url
 
         // broadcast a build message to each

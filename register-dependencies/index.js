@@ -18,12 +18,27 @@ const parseArray = function (val) {
 
 const repositoryLocation = `${process.env['RUNNER_TEMP']}/orchestrator-repo`
 
+let gitSSHCommand = '';
+
+function setupSSHKey() {
+    const sshKey = core.getInput('ssh-key');
+    if (sshKey) {
+        const sshKeyPath = `${process.env['RUNNER_TEMP']}/key`;
+        fs.writeFileSync(sshKeyPath, sshKey.trim() + '\n', { mode: 0o600 });
+        gitSSHCommand = `GIT_SSH_COMMAND=ssh -i ${sshKeyPath}`;
+        console.log("Using provided ssh-key");
+    }
+}
+
 
 function run() {
     try {
         // `who-to-greet` input defined in action metadata file
         const orchestrator = core.getInput('orchestrator');
-        const workflow = core.getInput('workflow')
+        const workflow = core.getInput('workflow');
+
+        setupSSHKey();
+
         const unencodedDependencies = parseArray(core.getInput('dependencies'));
         const unencodedRepository = encodeURIComponent(github.context.payload.repository.url);
         console.log(`Notifying that ${unencodedRepository} is complete`);
@@ -34,7 +49,7 @@ function run() {
 
         // clone the orchestrator repo
         console.log(`Cloning ${orchestrator} to ${repositoryLocation}`);
-        execProcess(`git clone ${orchestrator} ${repositoryLocation}`);
+        execProcess(`${gitSSHCommand} git clone --depth 1 ${orchestrator} ${repositoryLocation}`);
 
         // find the existing dependencies
         const dependencyFolder = `${repositoryLocation}/downstream/${repository}`;
@@ -81,9 +96,8 @@ function run() {
         if (changed) {
             console.log("Pushing to git");
             console.log("commit", execProcess(`git commit --git-path  ${repositoryLocation}/.git -a -m "Updating dependencies for ${unencodedRepository}`));
-            console.log("commit", execProcess(`git push --git-path  ${repositoryLocation}/.git`));
+            console.log("commit", execProcess(`${gitSSHCommand} git push --git-path  ${repositoryLocation}/.git`));
         }
-        // GIT_SSH_COMMAND='ssh -i ~/.ssh/your_private_key'
 
     } catch (error) {
         core.setFailed(error.message);

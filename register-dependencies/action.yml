@@ -10,6 +10,9 @@ inputs:
   workflow:
     description: "Name of the yaml file to run when an upstream dependency is built"
     required: true
+  ssh-key:
+    description: "ssh-key token for accessing orchestrator"
+    required: false
 runs:
   using: "node16"
   main: "index.js"

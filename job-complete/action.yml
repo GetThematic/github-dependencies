@@ -4,6 +4,13 @@ inputs:
   orchestrator:
     description: "URL of orchestrator repository"
     required: true
+  token:
+    description: "Github token for accessing orchestrator and other repositories"
+    required: false
+    default: ${{ github.token }}
+  ssh-key:
+    description: "ssh-key token for accessing orchestrator"
+    required: false
 runs:
   using: "node16"
   main: "index.js"
