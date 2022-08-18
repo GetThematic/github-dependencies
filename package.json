@@ -1,0 +1,24 @@
+{
+  "name": "github-dependencies",
+  "version": "1.0.0",
+  "description": "Github actions for managing dependencies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GetThematic/github-dependencies.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GetThematic/github-dependencies/issues"
+  },
+  "homepage": "https://github.com/GetThematic/github-dependencies#readme",
+  "dependencies": {
+    "@actions/core": "^1.9.1",
+    "@actions/github": "^5.0.3"
+  }
+}

@@ -1,0 +1,15 @@
+name: "Register Dependencies"
+description: "Registers dependent repositories"
+inputs:
+  orchestrator:
+    description: "URL of orchestrator repository"
+    required: true
+  repository:
+    description: "URL of the calling repository"
+    required: true
+  dependencies:
+    description: "List of repository urls to register as dependents"
+    required: true
+runs:
+  using: "node16"
+  main: "index.js"
