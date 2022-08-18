@@ -90,7 +90,7 @@ function run() {
         if (changed) {
             console.log("Pushing to git");
             console.log("commit", execProcess(`cd  ${repositoryLocation} && git commit -a -m "Updating dependencies for ${unencodedRepository}`));
-            console.log("commit", execProcess(`cd  ${repositoryLocation} && git push`);
+            console.log("commit", execProcess(`cd  ${repositoryLocation} && git push`));
         }
 
     } catch (error) {
