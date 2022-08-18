@@ -14,7 +14,12 @@ It does not handle circular dependencies or create the most optimal graph of dep
 ### `orchestrator`
 
 **Required** The repository being used for orchestration
-### `token`
+
+### `ssh-key`
+
+**Required** SSH key to use for accessing orchestrator
+
+### `github-token`
 
 **Required** Token to use for accessing orchestrator and downstream workflows
 
@@ -23,6 +28,8 @@ It does not handle circular dependencies or create the most optimal graph of dep
 uses: actions/github-dependencies/job-complete@v1.1
 with:
   orchestrator: ssh://git@github.com/YourOrg/orchestrator-repo
+  ssh-key: ${{ secrets.ssh-key }}
+  github-token: ${{ secrets.github-token }}
 
 
 # Register Dependencies
@@ -51,6 +58,7 @@ with:
 uses: actions/github-dependencies/register-dependencies@v1.1
 with:
   orchestrator: ssh://git@github.com/YourOrg/orchestrator-repo
+  ssh-key: ${{ secrets.ssh-key }}
   dependencies: |
     https://github.com/YourOrg/repo-1
     https://github.com/YourOrg/repo-2
