@@ -34,7 +34,7 @@ function setupSSHKey() {
 function prepareUrl(url) {
     // remove the protocol and site (we only support github dependencies because this relies on github actions)
     const unencoded = url.replace(/(^\w+:|^)\/\//, '');
-    const parts = url.split('/');
+    const parts = unencoded.split('/');
     return encodeURIComponent(`${parts[1]}/${parts[2]}`);
 }
 

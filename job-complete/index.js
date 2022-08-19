@@ -32,8 +32,10 @@ const dispatchWorkflow = async (octokit, owner, repo, workflow_id, reference, pa
 }
 
 function prepareUrl(url) {
+    // remove the protocol and site (we only support github dependencies because this relies on github actions)
     const unencoded = url.replace(/(^\w+:|^)\/\//, '');
-    return encodeURIComponent(unencoded);
+    const parts = unencoded.split('/');
+    return encodeURIComponent(`${parts[1]}/${parts[2]}`);
 }
 
 function unprepareUrl(url) {
