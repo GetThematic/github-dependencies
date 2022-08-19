@@ -32,8 +32,10 @@ function setupSSHKey() {
 }
 
 function prepareUrl(url) {
+    // remove the protocol and site (we only support github dependencies because this relies on github actions)
     const unencoded = url.replace(/(^\w+:|^)\/\//, '');
-    return encodeURIComponent(unencoded);
+    const parts = url.split('/');
+    return encodeURIComponent(`${parts[1]}/${parts[2]}`);
 }
 
 function run() {
@@ -63,7 +65,12 @@ function run() {
         const existingDependencies = [];
         if (fs.existsSync(dependencyFolder)) {
             fs.readdirSync(dependencyFolder).forEach(file => {
-                existingDependencies.push(file);
+                // its an existing dependency if either its not in dependencies OR the workflow is the same
+                // this will cause workflow changes to cause file updates
+                const existingWorkflow = fs.readFileSync(`${dependencyFolder}/${file}`);
+                if (existingWorkflow === workflow || !dependencies.includes(file)) {
+                    existingDependencies.push(file);
+                }
             });
         }
 

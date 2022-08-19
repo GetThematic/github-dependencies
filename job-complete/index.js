@@ -38,8 +38,8 @@ function prepareUrl(url) {
 
 function unprepareUrl(url) {
     const decoded = decodeURIComponent(url);
-    const split = decoded.split('/');
-    return { 'owner': split[1], 'repo': split[2] };
+    const split = unencoded.split('/');
+    return { 'owner': split[0], 'repo': split[1] };
 }
 
 function run() {
@@ -66,11 +66,11 @@ function run() {
         console.log(`Reading dependencies from ${upstreamFolder}`);
         if (fs.existsSync(upstreamFolder)) {
             fs.readdirSync(upstreamFolder).forEach(file => {
-                const url = unprepareUrl(file);
+                const downstreamRepository = unprepareUrl(file);
                 console.log("Dependency found: ", url);
                 const workflow = fs.readFileSync(`${upstreamFolder}/${file}`);
 
-                dispatchWorkflow(octokit, url['owner'], url['repo'], workflow, 'master', {});
+                dispatchWorkflow(octokit, downstreamRepository['owner'], downstreamRepository['repo'], workflow, 'master', {});
             });
         } else {
             console.log("No downstream dependencies found!")
