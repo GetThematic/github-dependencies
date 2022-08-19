@@ -68,8 +68,9 @@ function run() {
                 // its an existing dependency if either its not in dependencies OR the workflow is the same
                 // this will cause workflow changes to cause file updates
                 const existingWorkflow = fs.readFileSync(`${dependencyFolder}/${file}`);
-                console.log(`Comparing "${existingWorkflow}" and "${workflow}"`);
+                console.log(`Comparing "${existingWorkflow}" and "${workflow}"`, existingWorkflow === workflow, !dependencies.includes(file));
                 if (existingWorkflow === workflow || !dependencies.includes(file)) {
+                    console.log("Adding to existing");
                     existingDependencies.push(file);
                 }
             });
