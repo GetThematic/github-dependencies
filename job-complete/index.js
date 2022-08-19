@@ -69,7 +69,7 @@ function run() {
         if (fs.existsSync(upstreamFolder)) {
             fs.readdirSync(upstreamFolder).forEach(file => {
                 const downstreamRepository = unprepareUrl(file);
-                console.log("Dependency found: ", url);
+                console.log("Dependency found: ", downstreamRepository);
                 const workflow = fs.readFileSync(`${upstreamFolder}/${file}`);
 
                 dispatchWorkflow(octokit, downstreamRepository['owner'], downstreamRepository['repo'], workflow, 'master', {});
