@@ -47,7 +47,7 @@ function run() {
         // `who-to-greet` input defined in action metadata file
         const orchestrator = core.getInput('orchestrator');
         const token = core.getInput('github-token');
-        const unencodedRepository = github.context.payload.repository.url;
+        const unencodedRepository = github.context.payload.repository.html_url;
         console.log(`Notifying that ${unencodedRepository} is complete`);
         const repository = prepareUrl(unencodedRepository);
 
