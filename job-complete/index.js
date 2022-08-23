@@ -19,16 +19,22 @@ function setupSSHKey() {
         const sshKeyPath = `${process.env['RUNNER_TEMP']}/key`;
         fs.writeFileSync(sshKeyPath, sshKey.trim() + '\n', { mode: 0o600 });
         gitSSHCommand = `GIT_SSH_COMMAND='ssh -i "${sshKeyPath}" -o "StrictHostKeyChecking no"'`;
-        console.log("Using provided ssh-key");
+        core.debug("Using provided ssh-key");
     }
 }
 
 const dispatchWorkflow = async (octokit, owner, repo, workflow_id, reference, parameters) => {
-    const dispatchResp = await octokit.request(`POST /repos/${owner}/${repo}/actions/workflows/${workflow_id}/dispatches`, {
-        ref: reference,
-        inputs: parameters
-    });
-    console.log(`API response status: ${dispatchResp.status} 🚀`);
+    core.startGroup(`Dispatch ${owner}/${repo}/${workflow_id}`)
+    try {
+        const dispatchResp = await octokit.request(`POST /repos/${owner}/${repo}/actions/workflows/${workflow_id}/dispatches`, {
+            ref: reference,
+            inputs: parameters
+        });
+        core.debug(`API response status: ${dispatchResp.status} 🚀`);
+    } catch (error) {
+        core.warning(`Failed to dispatch to ${owner}/${repo}/${workflow_id}: ${error.message}`);
+    }
+    core.endGroup()
 }
 
 function prepareUrl(url) {
@@ -50,13 +56,13 @@ function run() {
         const orchestrator = core.getInput('orchestrator');
         const token = core.getInput('github-token');
         const unencodedRepository = github.context.payload.repository.html_url;
-        console.log(`Notifying that ${unencodedRepository} is complete`);
+        core.info(`Notifying that ${unencodedRepository} is complete`);
         const repository = prepareUrl(unencodedRepository);
 
         setupSSHKey();
 
         // clone the orchestrator repo
-        console.log(`Cloning ${orchestrator} to ${repositoryLocation}`);
+        core.debug(`Cloning ${orchestrator} to ${repositoryLocation}`);
         execProcess(`${gitSSHCommand} git clone --depth 1 ${orchestrator} ${repositoryLocation}`);
         // find all dependencies of url
 
@@ -65,17 +71,17 @@ function run() {
 
         // broadcast a build message to each
         const upstreamFolder = `${repositoryLocation}/upstream/${repository}`;
-        console.log(`Reading dependencies from ${upstreamFolder}`);
+        core.debug(`Reading dependencies from ${upstreamFolder}`);
         if (fs.existsSync(upstreamFolder)) {
             fs.readdirSync(upstreamFolder).forEach(file => {
                 const downstreamRepository = unprepareUrl(file);
-                console.log("Dependency found: ", downstreamRepository);
+                core.debug("Dependency found: ", downstreamRepository);
                 const workflow = fs.readFileSync(`${upstreamFolder}/${file}`, 'utf8');
 
                 dispatchWorkflow(octokit, downstreamRepository['owner'], downstreamRepository['repo'], workflow, 'master', {});
             });
         } else {
-            console.log("No downstream dependencies found!")
+            core.info("No downstream dependencies found!")
         }
 
     } catch (error) {
