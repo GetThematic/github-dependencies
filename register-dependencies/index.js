@@ -54,6 +54,7 @@ function run() {
         const repository = prepareUrl(unencodedRepository);
 
         console.log(`Debug: ${repository}`, dependencies);
+        console.log(`Debug: ${workflow}: ${reference}`);
 
         // clone the orchestrator repo
         console.log(`Cloning ${orchestrator} to ${repositoryLocation}`);
@@ -73,6 +74,8 @@ function run() {
 
                 const existingWorkflow = lines[0];
                 const existingReference = lines.length > 1 ? lines[1].trim() : '';
+
+                console.log("Existing Workflow", existingWorkflow, "existingReference", existingReference);
 
                 if ((existingWorkflow === workflow && existingReference === reference) || !dependencies.includes(file)) {
                     existingDependencies.push(file);
