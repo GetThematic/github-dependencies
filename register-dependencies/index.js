@@ -97,7 +97,7 @@ function run() {
 
             fs.mkdirSync(`${repositoryLocation}/upstream/${dependency}`, { recursive: true });
             const newUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
-            fs.writeFileSync(newUpstreamPath, workflow, { flag: 'w' });
+            fs.writeFileSync(newUpstreamPath, fileContents, { flag: 'w' });
         })
 
         const defunctDependencies = existingDependencies.filter(x => !dependencies.includes(x));
