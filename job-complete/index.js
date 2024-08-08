@@ -76,9 +76,18 @@ function run() {
             fs.readdirSync(upstreamFolder).forEach(file => {
                 const downstreamRepository = unprepareUrl(file);
                 core.debug("Dependency found: ", downstreamRepository);
-                const workflow = fs.readFileSync(`${upstreamFolder}/${file}`, 'utf8');
+                const fileContent = fs.readFileSync(`${upstreamFolder}/${file}`, 'utf8');
+                const lines = fileContent.split('\n').filter(line => line.trim() !== '');
 
-                dispatchWorkflow(octokit, downstreamRepository['owner'], downstreamRepository['repo'], workflow, 'master', {});
+                const workflow = lines[0];
+                let reference = lines.length > 1 ? lines[1].trim() : '';
+                // could be a file of only one line, or a file with an empty second line
+                if (!reference) {
+                    reference = 'master';
+                }
+
+
+                dispatchWorkflow(octokit, downstreamRepository['owner'], downstreamRepository['repo'], workflow, reference, {});
             });
         } else {
             core.info("No downstream dependencies found!")

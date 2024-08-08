@@ -43,6 +43,7 @@ function run() {
         // `who-to-greet` input defined in action metadata file
         const orchestrator = core.getInput('orchestrator');
         const workflow = core.getInput('workflow');
+        const reference = core.getInput('reference');
 
         setupSSHKey();
 
@@ -67,8 +68,13 @@ function run() {
             fs.readdirSync(dependencyFolder).forEach(file => {
                 // its an existing dependency if either its not in dependencies OR the workflow is the same
                 // this will cause workflow changes to cause file updates
-                const existingWorkflow = fs.readFileSync(`${dependencyFolder}/${file}`, 'utf8');
-                if (existingWorkflow === workflow || !dependencies.includes(file)) {
+                const fileContent = fs.readFileSync(`${upstreamFolder}/${file}`, 'utf8');
+                const lines = fileContent.split('\n').filter(line => line.trim() !== '');
+
+                const existingWorkflow = lines[0];
+                const existingReference = lines.length > 1 ? lines[1].trim() : '';
+
+                if ((existingWorkflow === workflow && existingReference === reference) || !dependencies.includes(file)) {
                     existingDependencies.push(file);
                 }
             });
@@ -81,15 +87,17 @@ function run() {
 
         let changed = false;
 
+        const fileContents = [workflow, reference].join('\n');
+
         newDependencies.map(dependency => {
             changed = true;
             fs.mkdirSync(`${repositoryLocation}/downstream/${repository}`, { recursive: true });
             const newDownstreamPath = `${repositoryLocation}/downstream/${repository}/${dependency}`;
-            fs.writeFileSync(newDownstreamPath, workflow, { flag: 'w' });
+            fs.writeFileSync(newDownstreamPath, fileContents, { flag: 'w' });
 
             fs.mkdirSync(`${repositoryLocation}/upstream/${dependency}`, { recursive: true });
             const newUpstreamPath = `${repositoryLocation}/upstream/${dependency}/${repository}`;
-            fs.writeFileSync(newUpstreamPath, workflow, { flag: 'w' });
+            fs.writeFileSync(newUpstreamPath, fileContents, { flag: 'w' });
         })
 
         const defunctDependencies = existingDependencies.filter(x => !dependencies.includes(x));
