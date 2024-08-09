@@ -69,7 +69,7 @@ function run() {
             fs.readdirSync(dependencyFolder).forEach(file => {
                 // its an existing dependency if either its not in dependencies OR the workflow is the same
                 // this will cause workflow changes to cause file updates
-                const fileContent = fs.readFileSync(`${upstreamFolder}/${file}`, 'utf8');
+                const fileContent = fs.readFileSync(`${dependencyFolder}/${file}`, 'utf8');
                 const lines = fileContent.split('\n').filter(line => line.trim() !== '');
 
                 const existingWorkflow = lines[0];
