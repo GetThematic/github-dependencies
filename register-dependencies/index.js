@@ -56,7 +56,11 @@ function run() {
         console.log(`Debug: ${repository}`, dependencies);
         console.log(`Debug: ${workflow}: ${reference}`);
 
-        // clone the orchestrator repo
+        // clean up any previous clone and clone the orchestrator repo
+        if (fs.existsSync(repositoryLocation)) {
+            console.log(`Removing existing clone at ${repositoryLocation}`);
+            fs.rmSync(repositoryLocation, { recursive: true, force: true });
+        }
         console.log(`Cloning ${orchestrator} to ${repositoryLocation}`);
         execProcess(`${gitSSHCommand} git clone --depth 1 ${orchestrator} ${repositoryLocation}`);
 
@@ -132,7 +136,7 @@ function run() {
 }
 
 function cleanup() {
-    execProcess(`rm -r -y ${repositoryLocation} || true`);
+    execProcess(`rm -rf ${repositoryLocation} || true`);
 }
 
 
